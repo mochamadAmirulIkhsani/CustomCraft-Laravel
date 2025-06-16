@@ -60,8 +60,10 @@ class ProductResource extends Resource
                 TextColumn::make('no_whatsapp'),
 
                 ImageColumn::make('image')
-                ->disk('public')
-                ->getStateUsing(fn($record) => $record->image ? asset('storage/' . $record->image) : null),
+                ->label('Banner 1')
+                ->size(80)
+                ->disk('public') // Gunakan disk 'public'
+                ->getStateUsing(fn ($record) => $record->image ? asset('storage/' . $record->image) : null),
 
                 ImageColumn::make('image2')
                 ->disk('public')
@@ -81,6 +83,7 @@ class ProductResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

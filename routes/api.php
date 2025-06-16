@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-Route::get('/products', [ProductController::class, 'index'] );
-Route::get('/products/{id}', [ProductController::class, 'show'] );
-Route::get('/banners', [BannerController::class, 'index'] );
-Route::get('/banners/{api}', [BannerController::class, 'show'] );
+Route::get('/produk', [ProductController::class, 'index'] );
+Route::get('/produk/{id}', [ProductController::class, 'show'] );
+Route::get('/banner', [BannerController::class, 'index'] );
+Route::get('/banner/{api}', [BannerController::class, 'show'] );

@@ -3,17 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\BannerResource\Pages;
-use App\Filament\Resources\BannerResource\RelationManagers;
 use App\Models\Banner;
-use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BannerResource extends Resource
 {
@@ -26,21 +22,22 @@ class BannerResource extends Resource
         return $form
             ->schema([
                 FileUpload::make('image')
-                 ->image()
-                 ->disk('public')
-                 ->directory('/banners'),
+                ->image()
+                ->disk('public')
+                ->directory('/banner')
+                ->preserveFilenames(),
                 FileUpload::make('image2')
                 ->image()
                 ->disk('public')
-                ->directory('/banners'),
+                ->directory('/banner'),
                 FileUpload::make('image3')
                 ->image()
                 ->disk('public')
-                ->directory('/banners'),
+                ->directory('/banner'),
                 FileUpload::make('image4')
                 ->image()
                 ->disk('public')
-                ->directory('/banners'),
+                ->directory('/banner'),
             ]);
     }
 
@@ -49,8 +46,10 @@ class BannerResource extends Resource
         return $table
             ->columns([
                 ImageColumn::make('image')
-                ->disk('public')
-                ->getStateUsing(fn($record) => $record->image ? asset('storage/' . $record->image) : null),
+                ->label('Banner 1')
+                ->size(80)
+                ->disk('public') // Gunakan disk 'public'
+                ->getStateUsing(fn ($record) => $record->image ? asset('storage/' . $record->image) : null),
 
                 ImageColumn::make('image2')
                 ->disk('public')
@@ -69,6 +68,7 @@ class BannerResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -80,7 +80,7 @@ class BannerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+
         ];
     }
 
@@ -90,6 +90,7 @@ class BannerResource extends Resource
             'index' => Pages\ListBanners::route('/'),
             'create' => Pages\CreateBanner::route('/create'),
             'edit' => Pages\EditBanner::route('/{record}/edit'),
+
         ];
     }
 }
