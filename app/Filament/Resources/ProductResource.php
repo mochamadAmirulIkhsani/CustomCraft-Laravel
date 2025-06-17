@@ -9,10 +9,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\ProductResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\ProductResource\RelationManagers;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
@@ -33,9 +30,9 @@ class ProductResource extends Resource
                 TextInput::make('no_whatsapp'),
 
                 FileUpload::make('image')
-                 ->image()
-                 ->disk('public')
-                 ->directory('/images'),
+                ->image()
+                ->disk('public')
+                ->directory('/images'),
                 FileUpload::make('image2')
                 ->image()
                 ->disk('public')
@@ -55,8 +52,13 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nama_produk'),
-                TextColumn::make('deskripsi'),
+                TextColumn::make('nama_produk')
+                ->description(function (Product $record) {
+                    $plainText = strip_tags($record->deskripsi);
+
+                    return \Illuminate\Support\Str::limit($plainText, 80);
+                }),
+                TextColumn::make('deskripsi')->hidden(),
                 TextColumn::make('no_whatsapp'),
 
                 ImageColumn::make('image')
