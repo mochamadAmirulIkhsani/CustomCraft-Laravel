@@ -1,15 +1,20 @@
 <?php
 
-use App\Http\Controllers\BannerController;
-use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BannerController;
+use App\Http\Controllers\ProductController;
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
 
-Route::get('/produk', [ProductController::class, 'index'] );
-Route::get('/produk/{id}', [ProductController::class, 'show'] );
-Route::get('/banner', [BannerController::class, 'index'] );
-Route::get('/banner/{api}', [BannerController::class, 'show'] );
+Route::apiResource('/products', App\Http\Controllers\ProductController::class);
+
+Route::apiResource('/banners', App\Http\Controllers\BannerController::class  );
+
+
+// Route::get('/product', [ProductController::class, 'index'] );
+// Route::get('/product/{id}', [ProductController::class, 'show'] );
+// Route::get('/banners', [BannerController::class, 'index'] );
+// Route::get('/banners/{api}', [BannerController::class, 'show'] );
