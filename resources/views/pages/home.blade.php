@@ -4,56 +4,64 @@
 
 @section('content')
 
-{{-- Bagian 1: Carousel Modern & Full-Width --}}
-@if(!empty($bannerImages))
-<div class="hero-carousel-container">
-    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+{{-- Bagian 1: Carousel Dinamis dengan Struktur Baru --}}
+@if($banners->isNotEmpty())
+{{-- Bagian Carousel Imersif --}}
+<div id="immersiveCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
 
-        {{-- Indikator Kustom --}}
-        <div class="carousel-indicators custom-indicators">
-            @foreach($bannerImages as $imagePath)
-                <button
-                    type="button"
-                    data-bs-target="#heroCarousel"
+    {{-- 1. INDIKATOR KUSTOM (GARIS) --}}
+    <div class="carousel-indicators carousel-indicators-lines">
+        @foreach($banners as $banner)
+            <button type="button"
+                    data-bs-target="#immersiveCarousel"
                     data-bs-slide-to="{{ $loop->index }}"
                     class="{{ $loop->first ? 'active' : '' }}"
                     aria-current="{{ $loop->first ? 'true' : 'false' }}"
                     aria-label="Slide {{ $loop->iteration }}">
-                </button>
-            @endforeach
-        </div>
-
-        <div class="carousel-inner">
-            @foreach($bannerImages as $imagePath)
-                <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
-                    <div class="hero-slide" style="background-image: url('{{ asset('storage/' . $imagePath) }}');">
-                        {{-- Lapisan Overlay Gelap --}}
-                        <div class="hero-overlay"></div>
-
-                        {{-- Konten Teks di Atas Slide --}}
-                        <div class="container hero-caption">
-                            <h1 class="display-4 fw-bolder animate__animated animate__fadeInDown">Wujudkan Ide Kustom Anda</h1>
-                            <p class="lead fs-5 mb-4 animate__animated animate__fadeInUp">Dari kaos hingga lanyard, kami hadir untuk membuat produk unik Anda menjadi nyata.</p>
-                            <a href="{{ route('catalogue') }}" class="btn btn-lg btn-light fw-bold animate__animated animate__fadeInUp">
-                                Lihat Produk <i class="bi bi-arrow-right-short"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-
-        @if(count($bannerImages) > 1)
-            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        @endif
+        @endforeach
     </div>
+
+    {{-- 2. KONTEN CAROUSEL (INNER) --}}
+    <div class="carousel-inner">
+        @foreach($banners as $banner)
+            <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                {{-- Gambar akan bertindak sebagai background --}}
+                <img src="{{ asset('storage/' . $banner->image_path) }}"
+                     class="d-block w-100"
+                     alt="{{ $banner->title }}">
+
+                {{-- Overlay Gelap untuk Keterbacaan Teks --}}
+                <div class="carousel-overlay"></div>
+
+                {{-- Caption (Teks dan Tombol) yang Terpusat --}}
+                <div class="carousel-caption text-center">
+                    {{-- Judul dengan animasi fade-in --}}
+                    <h1>{{ $banner->title }}</h1>
+
+                    {{-- Deskripsi (opsional, tampilkan jika ada) --}}
+                    @if(isset($banner->description) && !empty($banner->description))
+                        <p>{{ $banner->description }}</p>
+                    @endif
+
+                    {{-- Tombol Call-to-Action dengan animasi --}}
+                    <a href="{{ route('catalogue') }}" class="btn btn-outline-light btn-lg mt-3">
+                        Jelajahi Sekarang
+                    </a>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
+    {{-- 3. KONTROL KIRI/KANAN (OPSIONAL, tapi direkomendasikan) --}}
+    <button class="carousel-control-prev" type="button" data-bs-target="#immersiveCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#immersiveCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
 </div>
 @endif
 
@@ -335,5 +343,139 @@
         transform: translateY(-3px);
         box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
+
+    /* 1. Pengaturan Utama Carousel */
+    #immersiveCarousel {
+        /* Tinggi imersif, 80% dari tinggi layar */
+        height: 80vh;
+        width: 100%;
+        /* Pastikan tidak ada margin atas bawaan dari container lain */
+        margin-top: 0;
+    }
+
+    #immersiveCarousel .carousel-inner,
+    #immersiveCarousel .carousel-item {
+        height: 100%;
+    }
+
+    #immersiveCarousel .carousel-item img {
+        /* Memastikan gambar menutupi area tanpa distorsi */
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+        /* Filter halus untuk efek sinematik */
+        filter: brightness(0.9);
+    }
+
+    /* 2. Overlay Gelap */
+    .carousel-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        /* Gradient dari hitam semi-transparan ke lebih transparan di atas */
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.2) 100%);
+    }
+
+    /* 3. Penataan Caption (Teks & Tombol) */
+    #immersiveCarousel .carousel-caption {
+        /* Override posisi default Bootstrap */
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 2rem;
+        /* Pusatkan konten secara vertikal dan horizontal */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+    }
+
+    #immersiveCarousel .carousel-caption h1 {
+        font-size: clamp(2rem, 5vw, 4rem); /* Ukuran font responsif */
+        font-weight: 700;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+    }
+
+    #immersiveCarousel .carousel-caption p {
+        font-size: clamp(1rem, 2vw, 1.25rem);
+        max-width: 700px; /* Batasi lebar paragraf agar mudah dibaca */
+        margin-top: 1rem;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    /* 4. Tombol Call-to-Action Kustom */
+    #immersiveCarousel .btn-outline-light {
+        border-width: 2px;
+        border-radius: 50px; /* Tombol pil yang modern */
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease-in-out;
+    }
+
+    #immersiveCarousel .btn-outline-light:hover {
+        background-color: #fff;
+        color: #000;
+        transform: scale(1.05); /* Efek zoom kecil saat hover */
+    }
+
+    /* 5. Indikator Garis Kustom */
+    .carousel-indicators-lines {
+        bottom: 30px; /* Posisikan lebih tinggi dari bawah */
+        z-index: 15;
+    }
+
+    .carousel-indicators-lines button {
+        width: 50px; /* Lebar setiap garis */
+        height: 4px; /* Tinggi setiap garis */
+        margin: 0 5px;
+        background-color: rgba(255, 255, 255, 0.5);
+        border: none;
+        opacity: 0.7;
+        transition: opacity 0.4s ease;
+    }
+
+    .carousel-indicators-lines button.active {
+        opacity: 1;
+        background-color: #ffffff;
+    }
+
+    /* 6. Animasi Teks */
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Terapkan animasi hanya pada item yang aktif */
+    #immersiveCarousel .carousel-item.active .carousel-caption h1 {
+        animation: fadeInDown 0.8s ease-out forwards;
+    }
+
+    #immersiveCarousel .carousel-item.active .carousel-caption p,
+    #immersiveCarousel .carousel-item.active .carousel-caption .btn {
+        animation: fadeInUp 0.8s ease-out 0.3s forwards; /* Delay 0.3s */
+        opacity: 0; /* Mulai dari tidak terlihat */
+    }
+
 </style>
 @endpush

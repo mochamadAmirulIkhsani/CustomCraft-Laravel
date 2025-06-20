@@ -7,6 +7,9 @@
 
     <title>Custom Craft - @yield('title', 'Selamat Datang')</title>
 
+    <link rel="icon" type="image/png" href="{{ asset('logo.svg') }}">
+
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
@@ -15,11 +18,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+    </script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     {{-- Tambahkan Animate.css --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- Tambahkan baris ini untuk Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <!-- Custom Styles -->
     <style>
         /* Navbar background */
@@ -79,9 +91,25 @@
         main {
             flex: 1;
         }
+
+        .footer-logo {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            /* Hapus border atau sesuaikan warnanya agar cocok dengan background footer */
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .footer-logo:hover {
+            transform: scale(1.1);
+        }
     </style>
 
     @stack('styles')
+    @stack('scripts')
+
 </head>
 
 <body class="antialiased">
@@ -116,11 +144,13 @@
                     </li>
                     <li class="nav-item">
                         {{-- UBAH MENJADI 'contact.form' --}}
-                        <a href="{{ route('contact.create') }}" class="nav-link {{ request()->routeIs('contact.create') ? 'active' : '' }}">CONTACT US</a>
+                        <a href="{{ route('contact.create') }}"
+                            class="nav-link {{ request()->routeIs('contact.create') ? 'active' : '' }}">CONTACT US</a>
                     </li>
                 </ul>
-                <form class="d-flex ms-3" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                <form class="d-flex ms-3" role="search" action="{{ route('catalogue') }}" method="GET">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Search"
+                        aria-label="Search" />
                     <button class="btn btn-light" type="submit">SEARCH</button>
                 </form>
             </div>
@@ -132,41 +162,45 @@
         @yield('content')
     </main>
 
-    <footer class="text-white py-4 px-3 mt-auto">
-        <div class="container-fluid">
-            <div class="row justify-content-between align-items-center">
-                <!-- Logo dan Slogan -->
-                <div
-                    class="col-md-4 d-flex flex-column align-items-center align-items-md-start text-center text-md-start mb-3 mb-md-0">
-                    <img src="{{ asset('images/logo.png') }}" alt="Custom Craft" class="mb-2"
-                        style="
-                            width: 80px;
-                            height: auto;
-                            border-radius: 50%;
-                            border: 1px solid #000;
-                        " />
-                    <div>
-                        <strong>We Help You Create Unique Product</strong><br />
-                        <span>~Made With Love~</span>
-                    </div>
-                </div>
+    <footer class="text-white py-5 mt-auto">
+        <div class="container text-center">
 
-                <!-- Menu -->
-                <div class="col-md-3 text-center text-md-start mb-3 mb-md-0">
-                    <strong>Informasi</strong><br />
-                    <div><a href="{{ route('aboutus') }}" class="text-white text-decoration-none">About Us</a></div>
-                    <div><a href="{{ route('catalogue') }}" class="text-white text-decoration-none">Product</a></div>
-                    <div><a href="https://www.instagram.com" target="_blank"
-                            class="text-white text-decoration-none">Instagram</a></div>
-                </div>
+            <!-- Logo dan Nama Perusahaan -->
+            <a href="{{ url('/') }}" class="d-inline-block mb-3">
+                <img src="{{ asset('images/logo.png') }}" alt="Custom Craft Logo" class="footer-logo">
+            </a>
+            <h5 class="fw-bold">Custom Craft</h5>
+            <p class="text-white-50 mb-4">We Help You Create Unique Products</p>
 
-                <!-- Kontak -->
-                <div class="col-md-4 text-center text-md-start">
-                    <strong>Jl. Pisang Kipas No.10a Kota Malang</strong><br />
-                    Customcraftmlg@Gmail.Com<br />
-                    <strong>0813-5929-4714</strong>
-                </div>
+            <!-- Menu Navigasi -->
+            <div class="d-flex justify-content-center gap-3 gap-md-4 mb-4">
+                <a href="{{ route('aboutus') }}" class="text-white text-decoration-none">About Us</a>
+                <a href="{{ route('catalogue') }}" class="text-white text-decoration-none">Products</a>
+                <a href="{{ route('contact.create') }}" class="text-white text-decoration-none">Contact</a>
+                <a href="{{ url('/admin') }}" class="text-white text-decoration-none">Admin</a>
             </div>
+
+            <!-- Ikon Kontak & Sosial Media -->
+            <div id="contact" class="d-flex justify-content-center gap-4 mb-4">
+                <a href="https://www.instagram.com" target="_blank" class="text-white fs-4" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="mailto:Customcraftmlg@Gmail.Com" class="text-white fs-4" title="Email">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="https://wa.me/6287765748275" target="_blank" class="text-white fs-4" title="WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            </div>
+
+            <!-- Copyright -->
+            <div class="border-top border-white-50 pt-4 mt-4">
+                <small class="text-white-50">
+                    © {{ date('Y') }} Custom Craft. All Rights Reserved. <br>
+                    Jl. Pisang Kipas No.10a, Kota Malang
+                </small>
+            </div>
+
         </div>
     </footer>
 
