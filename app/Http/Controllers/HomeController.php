@@ -45,18 +45,14 @@ class HomeController extends Controller
             ['image' => 'images/reviews/review4.png'],
         ];
 
-        // Get the banner images
-        $bannerImages = [];
-        $bannerRecord = Banner::first();
+        // AMBIL DATA BANNER DENGAN CARA BARU
+        $banners = Banner::where('is_active', true) // Ambil hanya yang aktif
+                         ->orderBy('sort_order', 'asc') // Urutkan sesuai sort_order
+                         ->get();
 
-        if ($bannerRecord) {
-            if ($bannerRecord->image)  $bannerImages[] = $bannerRecord->image;
-            if ($bannerRecord->image2) $bannerImages[] = $bannerRecord->image2;
-            if ($bannerRecord->image3) $bannerImages[] = $bannerRecord->image3;
-            if ($bannerRecord->image4) $bannerImages[] = $bannerRecord->image4;
-        }
+        // Kirim koleksi $banners langsung ke view
 
         // Pass data to the view
-        return view('pages.home', compact('features', 'products', 'reviews', 'bannerImages'));
+        return view('pages.home', compact('features', 'products', 'reviews', 'banners'));
     }
 }
